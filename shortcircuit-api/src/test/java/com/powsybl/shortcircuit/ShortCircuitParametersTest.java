@@ -120,8 +120,7 @@ class ShortCircuitParametersTest extends AbstractConverterTest {
         public DummyExtension deserializeAndUpdate(JsonParser jsonParser, DeserializationContext deserializationContext, DummyExtension parameters) throws IOException {
             ObjectMapper objectMapper = createMapper();
             ObjectReader objectReader = objectMapper.readerForUpdating(parameters);
-            DummyExtension updatedParameters = objectReader.readValue(jsonParser, DummyExtension.class);
-            return updatedParameters;
+            return objectReader.readValue(jsonParser, DummyExtension.class);
         }
 
         @Override
@@ -211,11 +210,11 @@ class ShortCircuitParametersTest extends AbstractConverterTest {
         List<VoltageRange> voltageRanges = parameters.getVoltageRanges();
         assertEquals(3, voltageRanges.size());
         assertEquals(1, voltageRanges.get(0).getRangeCoefficient());
-        assertEquals(Range.between(380., 420.), voltageRanges.get(0).getRange());
+        assertEquals(Range.of(380., 420.), voltageRanges.get(0).getRange());
         assertEquals(1.2, voltageRanges.get(1).getRangeCoefficient());
-        assertEquals(Range.between(215., 235.), voltageRanges.get(1).getRange());
+        assertEquals(Range.of(215., 235.), voltageRanges.get(1).getRange());
         assertEquals(1.05, voltageRanges.get(2).getRangeCoefficient());
-        assertEquals(Range.between(80., 100.), voltageRanges.get(2).getRange());
+        assertEquals(Range.of(80., 100.), voltageRanges.get(2).getRange());
     }
 
     @Test
@@ -382,5 +381,20 @@ class ShortCircuitParametersTest extends AbstractConverterTest {
         PowsyblException e0 = assertThrows(PowsyblException.class, () -> JsonShortCircuitParameters
                 .read(stream));
         assertEquals("Voltage ranges for configured initial voltage profile are overlapping", e0.getMessage());
+    }
+
+    @Test
+    void testVoltageRangeWithSpecificVoltage() {
+        VoltageRange range = new VoltageRange(100, 200, 0.9, 150);
+        assertEquals(100, range.getMinimumNominalVoltage());
+        assertEquals(200, range.getMaximumNominalVoltage());
+        assertEquals(0.9, range.getRangeCoefficient());
+        assertEquals(150, range.getVoltage());
+    }
+
+    @Test
+    void testVoltageRangeWithSpecificVoltageOutOfBounds() {
+        PowsyblException e = assertThrows(PowsyblException.class, () -> new VoltageRange(100, 150, 0.9, 200));
+        assertEquals("Declared voltage should be in voltageRange [100.0..150.0] but it is 200.0", e.getMessage());
     }
 }
