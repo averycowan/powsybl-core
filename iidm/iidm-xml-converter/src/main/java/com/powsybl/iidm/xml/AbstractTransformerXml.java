@@ -80,7 +80,10 @@ abstract class AbstractTransformerXml<T extends Connectable<T>, A extends Identi
         if (rtc.hasLoadTapChangingCapabilities() || rtc.isRegulating()) {
             context.getWriter().writeAttribute(ATTR_REGULATING, Boolean.toString(rtc.isRegulating()));
         }
-        XmlUtil.writeDouble("targetV", rtc.getTargetV(), context.getWriter());
+        // TODO : add case with reactive power ?
+        if (rtc.getRegulationMode() == RatioTapChanger.RegulationMode.VOLTAGE) {
+            XmlUtil.writeDouble("targetV", rtc.getRegulationValue(), context.getWriter());
+        }
         if (rtc.getRegulationTerminal() != null) {
             TerminalRefXml.writeTerminalRef(rtc.getRegulationTerminal(), context, ELEM_TERMINAL_REF);
         }
@@ -96,11 +99,14 @@ abstract class AbstractTransformerXml<T extends Connectable<T>, A extends Identi
         int lowTapPosition = XmlUtil.readIntAttribute(context.getReader(), ATTR_LOW_TAP_POSITION);
         double targetDeadband = readTargetDeadband(context);
         boolean loadTapChangingCapabilities = XmlUtil.readBoolAttribute(context.getReader(), "loadTapChangingCapabilities");
-        double targetV = XmlUtil.readOptionalDoubleAttribute(context.getReader(), "targetV");
+        // TODO : add regulation mode
+        double regulationValue = XmlUtil.readOptionalDoubleAttribute(context.getReader(), "targetV");
         adder.setLowTapPosition(lowTapPosition)
                 .setTargetDeadband(targetDeadband)
                 .setLoadTapChangingCapabilities(loadTapChangingCapabilities)
-                .setTargetV(targetV);
+                // TODO : add regulation mode
+                .setRegulationMode(RatioTapChanger.RegulationMode.VOLTAGE)
+                .setRegulationValue(regulationValue);
         XmlUtil.consumeOptionalIntAttribute(context.getReader(), ATTR_TAP_POSITION, adder::setTapPosition);
         XmlUtil.consumeOptionalBoolAttribute(context.getReader(), ATTR_REGULATING, adder::setRegulating);
         boolean[] hasTerminalRef = new boolean[1];

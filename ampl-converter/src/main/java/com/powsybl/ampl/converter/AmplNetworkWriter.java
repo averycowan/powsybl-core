@@ -1167,8 +1167,9 @@ public class AmplNetworkWriter {
                     .writeCell(rtc.getTapPosition() - rtc.getLowTapPosition() + 1)
                     .writeCell(tcsNum)
                     .writeCell(rtc.hasLoadTapChangingCapabilities() && rtc.isRegulating());
-            if (config.isExportRatioTapChangerVoltageTarget()) {
-                formatter.writeCell(rtc.getTargetV());
+            // TODO : add export of rtc with reactive power control
+            if (config.isExportRatioTapChangerVoltageTarget() && rtc.getRegulationMode() == RatioTapChanger.RegulationMode.VOLTAGE) {
+                formatter.writeCell(rtc.getRegulationValue());
             }
             formatter.writeCell(faultNum)
                     .writeCell(actionNum)
