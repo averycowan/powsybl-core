@@ -18,7 +18,7 @@ import java.util.Objects;
  * This is used to define the configured initial voltage profile for short circuit calculation.
  * The voltage attribute allows to modify the nominal voltage to be considered for each nominal voltage of the range.
  * The coefficient is a coefficient that is applied to each nominal voltage.
- * @author Coline Piloquet <coline.piloquet at rte-france.com>
+ * @author Coline Piloquet {@literal <coline.piloquet at rte-france.com>}
  */
 public class VoltageRange {
     private final Range<Double> range;
