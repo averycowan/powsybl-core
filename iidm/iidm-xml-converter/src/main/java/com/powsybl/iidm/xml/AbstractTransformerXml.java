@@ -99,12 +99,12 @@ abstract class AbstractTransformerXml<T extends Connectable<T>, A extends Identi
         int lowTapPosition = XmlUtil.readIntAttribute(context.getReader(), ATTR_LOW_TAP_POSITION);
         double targetDeadband = readTargetDeadband(context);
         boolean loadTapChangingCapabilities = XmlUtil.readBoolAttribute(context.getReader(), "loadTapChangingCapabilities");
-        // TODO : add regulation mode
+        // TODO : add regulation mode ?
         double regulationValue = XmlUtil.readOptionalDoubleAttribute(context.getReader(), "targetV");
         adder.setLowTapPosition(lowTapPosition)
                 .setTargetDeadband(targetDeadband)
                 .setLoadTapChangingCapabilities(loadTapChangingCapabilities)
-                // TODO : add regulation mode
+                // TODO : add regulation mode ?
                 .setRegulationMode(RatioTapChanger.RegulationMode.VOLTAGE)
                 .setRegulationValue(regulationValue);
         XmlUtil.consumeOptionalIntAttribute(context.getReader(), ATTR_TAP_POSITION, adder::setTapPosition);
